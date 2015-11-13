@@ -21,15 +21,18 @@ namespace SportsStore.WebUI.Controllers
             model.Products = _repository.Products
                 .Where(x => category == null || x.Category == category)
                 .OrderBy(x => x.ProductID)
-                .Skip((page - 1)*PageSize)
+                .Skip((page - 1) * PageSize)
                 .Take(PageSize);
 
             model.PagingInfo = new PagingInfo();
             model.PagingInfo.CurrentPage = page;
             model.PagingInfo.ItemsPerPage = PageSize;
-            model.PagingInfo.TotalItems = _repository.Products.Count();
+            if (category == null)
+                model.PagingInfo.TotalItems = _repository.Products.Count();
+            else
+                model.PagingInfo.TotalItems = _repository.Products.Count(x => x.Category == category);
 
-            model.CurrenrCategory = category;
+            model.CurrentCategory = category;
 
             return View(model);
         }
